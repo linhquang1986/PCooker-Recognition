@@ -119,7 +119,7 @@ Websocket connection to Node server
 
 ==================================================*/
 
-const host = serverUrl.replace(/^http/, 'ws');
+const host = domain.replace(/^http/, 'ws');
 
 function connectSocket() {
   ws = new WebSocket(host);
