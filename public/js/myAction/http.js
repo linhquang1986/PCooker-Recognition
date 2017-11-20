@@ -1,5 +1,6 @@
 "use strict"
-var serverUrl = 'http://localhost:5000';
+// var serverUrl = 'http://10.100.0.225:5000'; Lan
+var serverUrl = 'http://118.69.133.91:5000'; // server public  
 var get = (url, callback) => {
     $.ajax({
         type: 'GET',

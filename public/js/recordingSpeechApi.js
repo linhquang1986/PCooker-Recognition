@@ -61,7 +61,7 @@ function startRecording() {
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   context = new AudioContext();
 
-  var recorder = context.createScriptProcessor(4096, 1, 1);
+  var recorder = context.createScriptProcessor(512, 1, 1);//bufferSize  256, 512, 1024, 2048, 4096, 8192, 16384
   recorder.connect(context.destination);
 
   var handleSuccess = function (stream) {
@@ -119,7 +119,7 @@ Websocket connection to Node server
 
 ==================================================*/
 
-const host = 'ws://localhost:5000';//location.origin.replace(/^http/, 'ws');
+const host = serverUrl.replace(/^http/, 'ws');
 
 function connectSocket() {
   ws = new WebSocket(host);
