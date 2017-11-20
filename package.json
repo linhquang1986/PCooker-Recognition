@@ -1,0 +1,24 @@
+{
+  "name": "1",
+  "version": "1.0.0",
+  "description": "Front end",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "Hello"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linhquang1986/PCooker-Recognition.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/linhquang1986/PCooker-Recognition/issues"
+  },
+  "homepage": "https://github.com/linhquang1986/PCooker-Recognition#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "path": "^0.12.7"
+  }
+}
