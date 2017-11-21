@@ -16,6 +16,7 @@ var isListen = false;
 Record audio from browser
 
 ==================================================*/
+
 function start() {
   try {
     if (recognition)
@@ -33,7 +34,7 @@ function start() {
         isListen = true;
         responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male", {
           onend: () => {
-            startRecording();
+            connectSocket();
           }
         });
       }
@@ -57,7 +58,7 @@ function start() {
 
 function startRecording() {
   showLoading();
-  connectSocket();
+  //connectSocket();
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   context = new AudioContext();
 
@@ -119,42 +120,57 @@ Websocket connection to Node server
 
 ==================================================*/
 
-const host = domain.replace(/^http/, 'ws');
+
+//const host = 'ws://localhost:3030'//domain.replace(/^http/, 'ws');
 
 function connectSocket() {
-  ws = new WebSocket(host);
-  var socketTimerInterval;
+  var socket = io.connect('http://localhost:3030/')
+  socket.on('connect', () => {
+    socket.emit('startStream');
+  })
+  socket.on('message', message => {
+    sendWitAi(message);
+    isListen = false;
+    writeToCaret(message);
+  })
+  socket.on('error', error => {
+    console.error(error)
+    isListen = true;
+    start();
+  })
+  // ws = new WebSocket(host);
+  // var socketTimerInterval;
 
-  ws.onopen = function () {
-    ws.send('new user info');
-    console.log('opened socket')
-  };
+  // ws.onopen = function () {
+  //   ws.send('new user info');
+  //   console.log('opened socket')
+  // };
 
-  // handle inbound transcripts from Node server
-  ws.onmessage = function (message) {
-    if (message.data.substring(0, 7) == "[Heard]") {
-      //$(".guess")[0].innerHTML = ''
-      var str = message.data.substring(9);
-      sendWitAi(str)
-      isListen = false;
-      writeToCaret(str);
-    }
-    else if (message.data.substring(0, 7) == "[Error]") {
-      var err = message.data.substring(9);
-      console.error(err)
-      isListen = false;
-      stopRecording();
-      start();
-    }
-  };
+  // // handle inbound transcripts from Node server
+  // ws.onmessage = function (message) {
+  //   if (message.data.substring(0, 7) == "[Heard]") {
+  //     //$(".guess")[0].innerHTML = ''
+  //     var str = message.data.substring(9);
+  //     sendWitAi(str)
+  //     isListen = false;
+  //     writeToCaret(str);
+  //   }
+  //   else if (message.data.substring(0, 7) == "[Error]") {
+  //     var err = message.data.substring(9);
+  //     console.error(err)
+  //     isListen = false;
+  //     stopRecording();
+  //     start();
+  //   }
+  // };
 
-  ws.onclose = function () {
-    clearInterval(socketTimerInterval);
-    console.log('closed socket');
-    if (recording) {
-      stopRecording();
-    }
-  };
+  // ws.onclose = function () {
+  //   clearInterval(socketTimerInterval);
+  //   console.log('closed socket');
+  //   if (recording) {
+  //     stopRecording();
+  //   }
+  // };
 }
 
 /*================================================

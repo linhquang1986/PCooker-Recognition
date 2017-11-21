@@ -18,8 +18,12 @@
   },
   "homepage": "https://github.com/linhquang1986/PCooker-Recognition#readme",
   "dependencies": {
+    "@google-cloud/speech": "^0.11.0",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
-    "path": "^0.12.7"
+    "node-record-lpcm16": "^0.3.0",
+    "path": "^0.12.7",
+    "socket.io": "^2.0.4",
+    "ws": "^3.3.2"
   }
 }
