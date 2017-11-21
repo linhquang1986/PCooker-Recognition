@@ -61,7 +61,7 @@ function startRecording() {
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   context = new AudioContext();
 
-  var recorder = context.createScriptProcessor(512, 1, 1);//bufferSize  256, 512, 1024, 2048, 4096, 8192, 16384
+  var recorder = context.createScriptProcessor(1024, 1, 1);//bufferSize  256, 512, 1024, 2048, 4096, 8192, 16384
   recorder.connect(context.destination);
 
   var handleSuccess = function (stream) {
@@ -140,7 +140,8 @@ function connectSocket() {
       writeToCaret(str);
     }
     else if (message.data.substring(0, 7) == "[Error]") {
-      console.error('error')
+      var err = message.data.substring(9);
+      console.error(err)
       isListen = false;
       stopRecording();
       start();
