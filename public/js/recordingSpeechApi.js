@@ -130,12 +130,13 @@ function connectSocket() {
   })
   socket.on('message', message => {
     sendWitAi(message);
-    isListen = false;
     writeToCaret(message);
   })
   socket.on('error', error => {
+    socket.disconnect();
+    socket.close();
     console.error(error)
-    isListen = true;
+    isListen = false;
     start();
   })
   // ws = new WebSocket(host);
