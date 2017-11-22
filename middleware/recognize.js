@@ -35,7 +35,7 @@ exports.streamingMicRecognize = (ws) => {
             .on('error', console.error)
             .on('data', data => {
                 if (data.results[0] && data.results[0].alternatives[0])
-                    ws.emit('message', { message: data.results[0].alternatives[0].transcript })
+                    ws.emit('message', data.results[0].alternatives[0].transcript)
                 else
                     ws.emit('error', { error: 'Reached transcription time limit' })
             }
