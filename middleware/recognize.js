@@ -1,5 +1,6 @@
 var appConfig = require('../config');
 var recognizeStream;
+var timeOut;
 var record = require('node-record-lpcm16');
 // Imports the Google Cloud client library
 const speech = require('@google-cloud/speech');
@@ -41,9 +42,7 @@ var startRecor = (recognizeStream) => {
 var startStream = (ws) => {
     return client
         .streamingRecognize(request)
-        .on('error', (err) => {
-            ws.emit('error', err)
-        })
+        .on('error', console.error)
         .on('data', data => {
             if (data.results[0] && data.results[0].alternatives[0])
                 ws.emit('message', data.results[0].alternatives[0].transcript)
@@ -57,17 +56,19 @@ var streamingMicRecognize = (ws) => {
 
     // Create a recognize stream
     recognizeStream = startStream(ws)
+
     // Start recording and send the microphone input to the Speech API
     startRecor(recognizeStream);
     console.log('Listening, press Ctrl+C to stop.');
     // [END speech_streaming_mic_recognize]
-    setTimeout(() => {
+    timeOut = setTimeout(() => {
         record.stop();
-        recognizeStream.end();
+        //recognizeStream.end();
         streamingMicRecognize(ws)
     }, 45000)
 }
 exports.streamingMicRecognize = streamingMicRecognize;
 exports.closeStream = () => {
+    clearTimeout(timeOut)
     record.stop();
 }

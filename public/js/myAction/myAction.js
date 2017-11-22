@@ -2,6 +2,7 @@
 var menuDrink = null;
 function _startorder() {
     $('.listmenu').show();
+    $('.drinks').show();
     $('#mic-icon').hide();
     get('/drink/getAllMenu', data => {
         menuDrink = data;
