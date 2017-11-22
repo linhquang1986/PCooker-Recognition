@@ -8,8 +8,8 @@ exports.startSocket = (server) => {
         var gstreams = null; // keeep track of speech streams
         console.log('Client connected...');
         client.on('startStream', function () {
-            //recor.streamingMicRecognize(client)
-            gstreams = speech.startGoogleSpeechStream(client);
+            recor.streamingMicRecognize(client)
+            //gstreams = speech.startGoogleSpeechStream(client);
         });
         client.on('buff', buf => {
             gstreams.write(buf)
@@ -21,7 +21,7 @@ exports.startSocket = (server) => {
         })
         client.on('disconnect', () => {
             console.log('Client disconnected')
-            gstreams.end();
+            //gstreams.end();
         })
     })
 }

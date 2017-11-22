@@ -35,8 +35,8 @@ function start() {
         isListen = true;
         responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male", {
           onend: () => {
-            //connectSocket();
-            startRecording();
+            connectSocket();
+            //startRecording();
           }
         });
       }
@@ -132,10 +132,10 @@ function connectSocket() {
     socket.emit('startStream');
     console.log('opened socket')
   })
-  socket.on('message', message => {
-    console.log(message);
-    sendWitAi(message);
-    writeToCaret(message);
+  socket.on('message', data => {
+    console.log(data.message);
+    sendWitAi(data.message);
+    writeToCaret(data.message);
   })
   socket.on('error', error => {
     socket.close();
