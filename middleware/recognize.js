@@ -30,7 +30,7 @@ var startRecor = (recognizeStream) => {
             threshold: 0.5,
             // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
             verbose: false,
-            recordProgram: 'sox', // Try also "arecord" or "sox"
+            recordProgram: 'arecord', // Try also "arecord" or "sox"
             silence: 1.0
         })
         .on('error', console.error)
@@ -53,7 +53,7 @@ var startStream = (ws) => {
         }
         );
 }
-exports.streamingMicRecognize = (ws) => {
+var streamingMicRecognize = (ws) => {
     // [START speech_streaming_mic_recognize]
 
     // Create a recognize stream
@@ -62,7 +62,13 @@ exports.streamingMicRecognize = (ws) => {
     startRecor(recognizeStream);
     console.log('Listening, press Ctrl+C to stop.');
     // [END speech_streaming_mic_recognize]
+	setTimeout(()=>{
+	record.stop();
+        recognizeStream.end();
+	streamingMicRecognize(ws)
+	},45000)
 }
+exports.streamingMicRecognize = streamingMicRecognize;
 exports.closeStream = () => {
     record.stop();
 }
