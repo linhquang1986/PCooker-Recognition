@@ -23,12 +23,27 @@ const request = {
     },
     interimResults: false, // If you want interim results, set this to true
 };
+var startRecor = (recognizeStream) => {
+    record
+        .start({
+            sampleRateHertz: 48000,
+            threshold: 0.5,
+            // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
+            verbose: false,
+            recordProgram: 'sox', // Try also "arecord" or "sox"
+            silence: 1.0
+        })
+        .on('error', console.error)
+        .pipe(recognizeStream);
+}
 var startStream = (ws) => {
     return client
         .streamingRecognize(request)
         .on('error', () => {
+            record.stop();
             recognizeStream.end();
             recognizeStream = startStream(ws);
+            startRecor(recognizeStream);
         })
         .on('data', data => {
             if (data.results[0] && data.results[0].alternatives[0])
@@ -44,18 +59,7 @@ exports.streamingMicRecognize = (ws) => {
     // Create a recognize stream
     recognizeStream = startStream(ws)
     // Start recording and send the microphone input to the Speech API
-    record
-        .start({
-            sampleRateHertz: 48000,
-            threshold: 0.5,
-            // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
-            verbose: false,
-            recordProgram: 'sox', // Try also "arecord" or "sox"
-            silence: 1.0
-        })
-        .on('error', console.error)
-        .pipe(recognizeStream);
-
+    startRecor(recognizeStream);
     console.log('Listening, press Ctrl+C to stop.');
     // [END speech_streaming_mic_recognize]
 }
