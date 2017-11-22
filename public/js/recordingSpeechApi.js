@@ -109,7 +109,7 @@ function stopRecording() {
   catch (err) {
     console.log(`ERROR unable to close media stream: ${err}`) // triggers on Firefox
   }
-  context.close();
+  //context.close();
   socket.close();
   //ws.close();
   //$(".start-button").css("display", "inline");

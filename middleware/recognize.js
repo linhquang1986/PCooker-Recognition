@@ -33,23 +33,22 @@ var startRecor = (recognizeStream) => {
             recordProgram: 'arecord', // Try also "arecord" or "sox"
             silence: 1.0
         })
-        .on('error', console.error)
+        .on('error', (err) => {
+            ws.emit('error', err)
+        })
         .pipe(recognizeStream);
 }
 var startStream = (ws) => {
     return client
         .streamingRecognize(request)
-        .on('error', () => {
-            record.stop();
-            recognizeStream.end();
-            recognizeStream = startStream(ws);
-            startRecor(recognizeStream);
+        .on('error', (err) => {
+            ws.emit('error', err)
         })
         .on('data', data => {
             if (data.results[0] && data.results[0].alternatives[0])
                 ws.emit('message', data.results[0].alternatives[0].transcript)
             else
-                ws.emit('error', { error: 'Reached transcription time limit' })
+                ws.emit('error', 'Reached transcription time limit')
         }
         );
 }
@@ -62,11 +61,11 @@ var streamingMicRecognize = (ws) => {
     startRecor(recognizeStream);
     console.log('Listening, press Ctrl+C to stop.');
     // [END speech_streaming_mic_recognize]
-	setTimeout(()=>{
-	record.stop();
+    setTimeout(() => {
+        record.stop();
         recognizeStream.end();
-	streamingMicRecognize(ws)
-	},45000)
+        streamingMicRecognize(ws)
+    }, 45000)
 }
 exports.streamingMicRecognize = streamingMicRecognize;
 exports.closeStream = () => {
