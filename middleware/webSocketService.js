@@ -20,6 +20,7 @@ exports.startSocket = (server) => {
             gstreams = speech.startGoogleSpeechStream(client);
         })
         client.on('disconnect', () => {
+            recor.closeStream();
             console.log('Client disconnected')
             //gstreams.end();
         })
