@@ -133,9 +133,9 @@ function connectSocket() {
     console.log('opened socket')
   })
   socket.on('message', data => {
-    console.log(data.message);
-    sendWitAi(data.message);
-    writeToCaret(data.message);
+    console.log(data);
+    sendWitAi(data);
+    writeToCaret(data);
   })
   socket.on('error', error => {
     socket.close();

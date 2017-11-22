@@ -21,14 +21,14 @@ exports.streamingMicRecognize = (ws) => {
     // const sampleRateHertz = 16000;
     // const languageCode = 'BCP-47 language code, e.g. en-US';
 
-    const request = {
-        config: {
-            encoding: 'LINEAR16',
-            sampleRateHertz: 16000,
-            languageCode: 'vi-VN',
-        },
-        interimResults: false, // If you want interim results, set this to true
-    };
+        const request = {
+            config: {
+                encoding: 'LINEAR16',
+                sampleRateHertz: 48000,
+                languageCode: 'vi-VN',
+            },
+            interimResults: false, // If you want interim results, set this to true
+        };
 
     // Create a recognize stream
     const recognizeStream = client
@@ -44,23 +44,32 @@ exports.streamingMicRecognize = (ws) => {
         }
         );
 
-    // Start recording and send the microphone input to the Speech API
-    record
-        .start({
-            sampleRateHertz: 16000,
-            threshold: 0.5,
-            // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
-            verbose: false,
-            recordProgram: 'arecord', // Try also "arecord" or "sox"
-            silence: 1.0
-        })
-        .on('error', console.error)
-        .pipe(recognizeStream);
+        // Start recording and send the microphone input to the Speech API
+        record
+            .start({
+                sampleRateHertz: 48000,
+                threshold: 0.5,
+                // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
+                verbose: false,
+                recordProgram: 'arecord', // Try also "arecord" or "sox"
+                silence: 1.0
+            })
+            .on('error', console.error)
+            .pipe(recognizeStream);
 
     console.log('Listening, press Ctrl+C to stop.');
     interVal = setInterval(() => {
         record.stop();
-        record.start();
+        record.start({
+                sampleRateHertz: 48000,
+                threshold: 0.5,
+                // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
+                verbose: false,
+                recordProgram: 'arecord', // Try also "arecord" or "sox"
+                silence: 1.0
+            })
+            .on('error', console.error)
+            .pipe(recognizeStream);
     }, 45000)
     // [END speech_streaming_mic_recognize]
 }
