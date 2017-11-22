@@ -1,5 +1,5 @@
-var appConfig = require('../config');
 exports.streamingMicRecognize = (ws) => {
+    try {
         // [START speech_streaming_mic_recognize]
         const record = require('node-record-lpcm16');
 
@@ -9,7 +9,7 @@ exports.streamingMicRecognize = (ws) => {
         // Creates a client
         const client = new speech.SpeechClient({
             projectId: 'recognitionvietnamese',
-            keyFilename: appConfig.google_api.speech.key_url
+            keyFilename: 'RecognitionVietNamese.json'
         });
 
         /**
@@ -31,9 +31,7 @@ exports.streamingMicRecognize = (ws) => {
         // Create a recognize stream
         const recognizeStream = client
             .streamingRecognize(request)
-            .on('error', ()=>{
-                console.log(123)
-            })
+            .on('error', console.error)
             .on('data', data => {
                 if (data.results[0] && data.results[0].alternatives[0])
                     ws.emit('message', { message: data.results[0].alternatives[0].transcript })
@@ -45,11 +43,12 @@ exports.streamingMicRecognize = (ws) => {
         // Start recording and send the microphone input to the Speech API
         record
             .start({
-                sampleRateHertz: 16000,
+                sampleRate: 16000,
+                //sampleRateHertz: 44100,
                 threshold: 0.5,
                 // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
                 verbose: false,
-                recordProgram: 'arecord', // Try also "arecord" or "sox"
+                recordProgram: 'sox', // Try also "arecord" or "sox"
                 silence: 1.0
             })
             .on('error', console.error)
@@ -57,5 +56,7 @@ exports.streamingMicRecognize = (ws) => {
 
         console.log('Listening, press Ctrl+C to stop.');
         // [END speech_streaming_mic_recognize]
-    
+    } catch (err) {
+        ws.emit('error', { error: 'ERROR' })
+    }
 }
