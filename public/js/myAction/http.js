@@ -1,7 +1,7 @@
 "use strict"
 //var domain = 'http://10.100.0.225:5000';// Lan
 var domain = 'http://118.69.133.91:5000'; // server public   
-//var domain = 'http://localhost:5000'; //local
+var domainLocal = 'http://localhost:3030'; //local
 var get = (url, callback) => {
     $.ajax({
         type: 'GET',

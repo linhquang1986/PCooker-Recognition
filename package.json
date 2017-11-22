@@ -19,11 +19,22 @@
   "homepage": "https://github.com/linhquang1986/PCooker-Recognition#readme",
   "dependencies": {
     "@google-cloud/speech": "^0.11.0",
+    "convict": "^4.0.1",
     "ejs": "^2.5.7",
-    "express": "^4.16.2",
-    "node-record-lpcm16": "^0.3.0",
-    "path": "^0.12.7",
-    "socket.io": "^2.0.4",
-    "ws": "^3.3.2"
+    "@google-cloud/vision": "^0.12.0",
+    "body-parser": "1.15.2",
+    "cookie": "0.3.1",
+    "cookie-parser": "1.4.3",
+    "debug": "2.3.3",
+    "express": "4.14.0",
+    "fs": "0.0.1-security",
+    "node-quickbooks": "2.0.11",
+    "node-uuid": "^1.4.8",
+    "node-wit": "^4.3.0",
+    "nodemailer": "2.6.4",
+    "opn": "^5.1.0",
+    "q": "^1.5.1",
+    "request": "2.79.0",
+    "socket.io": "1.6.0"
   }
 }

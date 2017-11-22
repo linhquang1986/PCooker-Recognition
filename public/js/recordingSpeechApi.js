@@ -5,6 +5,7 @@ var audioInput;
 var context;
 var streamStartTime;
 var ws;
+var socket;
 var breakTime = 45000; // how long to wait before starting a new speech stream on lull in input volume
 var volume = 0; // volume meter initial value 
 var recording = false;
@@ -34,7 +35,8 @@ function start() {
         isListen = true;
         responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male", {
           onend: () => {
-            connectSocket();
+            //connectSocket();
+            startRecording();
           }
         });
       }
@@ -57,12 +59,12 @@ function start() {
 }
 
 function startRecording() {
-  showLoading();
-  //connectSocket();
+  //showLoading();
+  connectSocket();
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   context = new AudioContext();
 
-  var recorder = context.createScriptProcessor(1024, 1, 1);//bufferSize  256, 512, 1024, 2048, 4096, 8192, 16384
+  var recorder = context.createScriptProcessor(2048, 1, 1);//bufferSize  256, 512, 1024, 2048, 4096, 8192, 16384
   recorder.connect(context.destination);
 
   var handleSuccess = function (stream) {
@@ -72,16 +74,16 @@ function startRecording() {
     recorder.onaudioprocess = function (stream) {
       if (!recording) return;
       var buf = stream.inputBuffer.getChannelData(0);
-      volume = detectVolume(buf, this);
+      //volume = detectVolume(buf, this);
       //$(".volume_meter")[0].value = volume * 100;
-      if (volume < 0.01 && (Date.now() > (streamStartTime + breakTime))) {
-        ws.send("restarting Google Stream");
+      if (Date.now() > (streamStartTime + breakTime)) {
+        socket.emit('restarting');
         console.log("restarting Google Stream");
         streamStartTime = Date.now();
         writeToCaret(' ');
       }
       else {
-        ws.send(float32ToInt16(buf)); // send audio stream to Node server   
+        socket.emit('buff', float32ToInt16(buf)); // send audio stream to Node server   
       }
     }
   }
@@ -108,7 +110,8 @@ function stopRecording() {
     console.log(`ERROR unable to close media stream: ${err}`) // triggers on Firefox
   }
   context.close();
-  ws.close();
+  socket.close();
+  //ws.close();
   //$(".start-button").css("display", "inline");
   //$(".stop-button").css("display", "none");
 }
@@ -124,54 +127,29 @@ Websocket connection to Node server
 //const host = 'ws://localhost:3030'//domain.replace(/^http/, 'ws');
 
 function connectSocket() {
-  var socket = io.connect('http://localhost:3030/')
+  socket = io.connect('http://localhost:3030/')
   socket.on('connect', () => {
     socket.emit('startStream');
+    console.log('opened socket')
   })
   socket.on('message', message => {
+    console.log(message);
     sendWitAi(message);
     writeToCaret(message);
   })
   socket.on('error', error => {
-    socket.disconnect();
     socket.close();
     console.error(error)
     isListen = false;
     start();
   })
-  // ws = new WebSocket(host);
-  // var socketTimerInterval;
-
-  // ws.onopen = function () {
-  //   ws.send('new user info');
-  //   console.log('opened socket')
-  // };
-
-  // // handle inbound transcripts from Node server
-  // ws.onmessage = function (message) {
-  //   if (message.data.substring(0, 7) == "[Heard]") {
-  //     //$(".guess")[0].innerHTML = ''
-  //     var str = message.data.substring(9);
-  //     sendWitAi(str)
-  //     isListen = false;
-  //     writeToCaret(str);
-  //   }
-  //   else if (message.data.substring(0, 7) == "[Error]") {
-  //     var err = message.data.substring(9);
-  //     console.error(err)
-  //     isListen = false;
-  //     stopRecording();
-  //     start();
-  //   }
-  // };
-
-  // ws.onclose = function () {
-  //   clearInterval(socketTimerInterval);
-  //   console.log('closed socket');
-  //   if (recording) {
-  //     stopRecording();
-  //   }
-  // };
+  socket.on('disconnect', () => {
+    isListen = false;
+    console.log('closed socket');
+    if (recording) {
+      stopRecording();
+    }
+  })
 }
 
 /*================================================
