@@ -18,10 +18,17 @@ function sendWitAi(msg) {
             let text = res.entities.action[0].value;
             responsiveVoice.speak(text, "Vietnamese Male")
         }
-    })
-    menuDrink && menuDrink.forEach(item => {
-        if (msg.toLowerCase().trim().search(item.name.toLowerCase().trim()) >= 0)
-            getDrink(item._id)
+        if (res.entities.menus) {
+            let _menu = res.entities.menus[0].value;
+            menuDrink && menuDrink.forEach(item => {
+                if (_menu.toLowerCase().trim().search(item.name.toLowerCase().trim()) >= 0)
+                    getDrink(item._id)
+            })
+        }
+        if (res.entities.drinks) {
+            let _drink = res.entities.drinks[0].value;
+            responsiveVoice.speak('Bạn chọn ' + _drink, "Vietnamese Male")
+        }
     })
 }
 // function start() {
