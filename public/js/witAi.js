@@ -16,7 +16,7 @@ function sendWitAi(msg) {
         }
         if (res.entities.action) {
             let text = res.entities.action[0].value;
-            responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male")
+            responsiveVoice.speak(text, "Vietnamese Male")
         }
     })
     menuDrink && menuDrink.forEach(item => {
