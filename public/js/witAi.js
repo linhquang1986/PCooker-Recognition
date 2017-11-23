@@ -9,10 +9,14 @@ function sendWitAi(msg) {
     let data = { message: msg }
     postWit('/wit/message', data, (res) => {
         console.log(res)
-        if (res.entities.intent) {
-            let action = res.entities.intent[0].value
+        if (res.entities.statements) {
+            let action = res.entities.statements[0].value
             inAction = action;
             window[action]();
+        }
+        if (res.entities.action) {
+            let text = res.entities.action[0].value;
+            responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male")
         }
     })
     menuDrink && menuDrink.forEach(item => {
