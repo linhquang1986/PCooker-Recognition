@@ -10,6 +10,11 @@ var get = (url, callback) => {
         dataType: "json",
         success: data => {
             callback(data);
+        },
+        statusCode: {
+            400: (err) => {
+                callback(err.responseJSON)
+            }
         }
     })
 }
@@ -23,6 +28,29 @@ var post = (url, data, callback) => {
         data: JSON.stringify(data),
         success: data => {
             callback(data);
+        },
+        statusCode: {
+            400: (err) => {
+                callback(err.responseJSON)
+            }
+        }
+    })
+}
+
+var postWit = (url, data, callback) => {
+    $.ajax({
+        type: 'POST',
+        url: domainLocal + url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        data: JSON.stringify(data),
+        success: data => {
+            callback(data);
+        },
+        statusCode: {
+            400: (err) => {
+                callback(err.responseJSON)
+            }
         }
     })
 }
@@ -36,6 +64,11 @@ var put = (url, id, data, callback) => {
         data: JSON.stringify(data),
         success: data => {
             callback(data);
+        },
+        statusCode: {
+            400: (err) => {
+                callback(err.responseJSON)
+            }
         }
     })
 }
@@ -47,6 +80,11 @@ var _delete = (url, id, callback) => {
         dataType: "json",
         success: data => {
             callback(data);
+        },
+        statusCode: {
+            400: (err) => {
+                callback(err.responseJSON)
+            }
         }
     })
 }

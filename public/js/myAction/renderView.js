@@ -21,7 +21,7 @@ var renderMenu = (data) => {
 var renderDrink = (data) => {
     $('.drinks').empty();
     data.forEach(item => {
-        let drinkIntent = '<li class="list-group-item">' + item.name + '</li>';
+        let drinkIntent = '<li class="list-group-item">' + item.name + '<span class="badge">' + item.price + ' Đ</span></li>';
         renderByClass(drinkIntent, 'drinks')
     })
 }

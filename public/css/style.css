@@ -18,5 +18,19 @@
   font-weight: bold;
   padding-top: 30px;
 }
+.message-success{
+  position: absolute;
+  z-index: 1;
+  width: 400px;
+  right: 0;
+  top: 0;
+}
+.message-error{
+  position: absolute;
+  z-index: 1;
+  width: 400px;
+  right: 0;
+  top: 0;
+}
 
 

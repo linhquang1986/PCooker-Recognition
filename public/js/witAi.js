@@ -7,7 +7,7 @@ function speak(msg) {
 function sendWitAi(msg) {
     console.log(inAction)
     let data = { message: msg }
-    post('/wit/message', data, (res) => {
+    postWit('/wit/message', data, (res) => {
         console.log(res)
         if (res.entities.intent) {
             let action = res.entities.intent[0].value
