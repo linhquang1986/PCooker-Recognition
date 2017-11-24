@@ -5,7 +5,7 @@ function speak(msg) {
     responsiveVoice.speak(msg, "Vietnamese Male");
 }
 function sendWitAi(msg) {
-    let abort = checkAbortDrink(msg);
+    let abort = checkAbortDrink(locdau(msg));
     let data = { message: msg }
     postWit('/wit/message', data, (res) => {
         console.log(res)
