@@ -1,5 +1,6 @@
 var listAction = {
-    chooseMenu: '_startorder',
+    _waiting: '_call',
+    ordering: '_startorder',
     free: '_free',
     chooseDrink: '_choosedrink'
 }

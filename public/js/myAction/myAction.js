@@ -24,6 +24,24 @@ function _free() {
     $('.drinks').hide();
 }
 
+function updateBill(_drink) {
+    //responsiveVoice.speak('Bạn muốn bỏ ' + _drink + ' đúng không?', "Vietnamese Male", { rate: 1.2 });
+    let dr = drinksData.find(drink => { return drink.name.toLowerCase() == _drink.toLowerCase() })
+    if (dr) {
+        let drinkInBill = $('.ordersDrinks').find(`[drinkId=${dr._id}]`);
+        drinkInBill.remove();
+        billData.filter(drink => drink.toLowerCase() !== _drink.toLowerCase())
+    }
+}
+function checkAbortDrink(msg) {
+    let abort = 0;
+    msg.search('vỏ') >= 0 && abort++;
+    msg.search('bỏ') >= 0 && abort++;
+    msg.search('hủy') >= 0 && abort++;
+    msg.search('huy') >= 0 && abort++;
+    msg.search('võ') >= 0 && abort++;
+    return abort;
+}
 function addBill(_drink) {
     drinksData.forEach(drink => {
         if (_drink.toLowerCase() == drink.name.toLowerCase()) {

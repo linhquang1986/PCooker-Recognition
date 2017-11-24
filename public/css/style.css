@@ -33,11 +33,16 @@
   top: 0;
 }
 .orders{
+  width:350px !important; 
   position: absolute;
   z-index: 1;
   width: 400px;
   right: 0;
   top: 0;
+}
+.orders .panel-heading{
+  height: auto !important;
+  padding-top: inherit !important;
 }
 .quanlity{
   position: absolute;
