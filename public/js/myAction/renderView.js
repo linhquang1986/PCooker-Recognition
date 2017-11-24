@@ -1,3 +1,4 @@
+
 "use strict"
 var renderById = (content, domId) => {
     let dom = $('#' + domId);
@@ -8,20 +9,33 @@ var renderByClass = (content, domClass) => {
     dom.append(content);
 }
 var renderMenu = (data) => {
-    $('.listmenu').empty();
-    data.forEach(function (item) {
-        let menuIntent = "<div class='col-md-4 panel panel-success'>"
-            + '<div class="panel-heading text-center">'
-            + item.name
-            + "</div>"
-            + '</div>'
-        renderByClass(menuIntent, 'listmenu')
-    }, this);
+    new Promise((resolve, reject) => {
+        $('.listmenu').empty();
+        data.forEach(function (item) {
+            let menuIntent;
+            let drinks = item.drinks;
+            menuIntent = "<div class='col-md-4 panel panel-success'>"
+                + '<div class="panel-heading text-center">'
+                + item.name
+                + "</div>"
+                + "<div class='panel-body' menu='" + item._id + "'>"
+                + `<ul class="list-group drinks">`
+                + `</ul>`
+                + "</div>"
+                + '</div>';
+            renderByClass(menuIntent, 'listmenu')
+        }, this);
+        resolve(true)
+    }).then(success => {
+        renderDrink()
+    })
 }
-var renderDrink = (data) => {
-    $('.drinks').empty();
-    data.forEach(item => {
-        let drinkIntent = '<li class="list-group-item">' + item.name + '<span class="badge">' + item.price + ' Đ</span></li>';
-        renderByClass(drinkIntent, 'drinks')
+var renderDrink = () => {
+    getAllDrink(data => {
+        data.forEach(drink => {
+            let drinkContent = $(`[menu=${drink.menu}]`).children('.drinks');
+            let drinkIntent = '<li class="list-group-item drink-item" drinkId="' + drink._id + '">' + drink.name + '<span class="badge">' + drink.price + ' Đ</span></li>';
+            drinkContent.append(drinkIntent);
+        })
     })
 }

@@ -31,15 +31,16 @@ function start() {
     recognition.onresult = function (event) {
       let text = event.results[0][0].transcript;
       console.log('You said: ', text);
-      if (text == 'Doraemon' || text == 'doraemon') {
-        isListen = true;
-        responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male", {
-          onend: () => {
-            connectSocket();
-            //startRecording();
-          }
-        });
-      }
+      sendWitAi(text)
+      // if (text == 'Doraemon' || text == 'doraemon') {
+      //   isListen = true;
+      //   responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male", {
+      //     onend: () => {
+      //       connectSocket();
+      //       //startRecording();
+      //     }
+      //   });
+      // }
       recognition.abort();
     };
     recognition.onend = () => {
@@ -57,6 +58,8 @@ function start() {
     console.error('Brower is not support!');
   }
 }
+
+//_startorder();
 
 function startRecording() {
   //showLoading();

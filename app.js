@@ -10,9 +10,6 @@ app.set('view engine', 'ejs');
 app.get('/', (req, res) => {
     res.render('index');
 })
-app.get('/management', (req, res) => {
-    res.render('management');
-})
 var listener = app.listen(3030, () => {
     console.log('Server running on localhost:' + listener.address().port);
 })
