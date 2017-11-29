@@ -12,11 +12,9 @@
   padding: 10px;
   border: none;
 }
-.panel .panel-heading{
-  height: 100px;
+.panel .menu-heading{
   font-size: 30px;
   font-weight: bold;
-  padding-top: 30px;
 }
 .message-success{
   position: absolute;
@@ -73,6 +71,25 @@
    -moz-animation: flickerAnimation .5s infinite;
    -o-animation: flickerAnimation .5s infinite;
     animation: flickerAnimation .5s infinite;
+}
+.chatbox-heading{
+  font-size: 20px;
+  height: 50px;
+  padding: 10px 0 0 0;
+}
+.microphone{
+  color: darkgray;
+  border: 5px solid;
+  font-size: 22px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border-radius: 25px;
+  padding: 8px;
+  cursor: pointer
+}
+.microphone-start{
+  color:darkseagreen;
 }
 
 

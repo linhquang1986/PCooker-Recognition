@@ -17,7 +17,17 @@ var isListen = false;
 Record audio from browser
 
 ==================================================*/
-
+$('#microphone').on('click', (e) => {
+  if (isListen) {
+    stopRecording();
+    start();
+    $('#microphone').removeClass('microphone-start')
+  } else {
+    isListen = true;
+    connectSocket();
+    $('#microphone').addClass('microphone-start')
+  }
+})
 function start() {
   try {
     if (recognition)
@@ -30,17 +40,17 @@ function start() {
 
     recognition.onresult = function (event) {
       let text = event.results[0][0].transcript;
-      console.log('You said: ', text);
-      //sendWitAi(text)
-      if (text == 'Doraemon' || text == 'doraemon') {
-        isListen = true;
-        responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male", {
-          onend: () => {
-            connectSocket();
-            //startRecording();
-          }
-        });
-      }
+      userChat(text);
+      sendWitAi(text)
+      // if (text == 'Doraemon' || text == 'doraemon') {
+      //   isListen = true;
+      //   responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male", {
+      //     onend: () => {
+      //       connectSocket();
+      //       //startRecording();
+      //     }
+      //   });
+      // }
       recognition.abort();
     };
     recognition.onend = () => {
@@ -51,6 +61,10 @@ function start() {
       if (event.error == 'no-speech') {
         console.log('No speech was detected. Try again.')
         recognition.abort();
+        // if (billData.length > 0 && userAs == false) {
+        //   userAs = true;
+        //   speak('Bạn còn muốn gọi thêm gì nữa không?')
+        // }
       };
     }
   }
@@ -149,6 +163,7 @@ function connectSocket() {
   socket.on('disconnect', () => {
     isListen = false;
     console.log('closed socket');
+    $('#microphone').removeClass('microphone-start')
     if (recording) {
       stopRecording();
     }

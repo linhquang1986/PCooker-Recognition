@@ -2,70 +2,95 @@
 var recognition = null;
 var inAction = null;
 var drinkOption = null;
-function speak(msg) {
-    responsiveVoice.speak(msg, "Vietnamese Male");
-}
 function sendWitAi(msg) {
-    let abort = null;
+    let entities = {
+        _abort: null,
+        _quanlity: null,
+        _drink: null,
+        _menu: null,
+        nhietdo: null,
+        milk: null
+    }
     let data = { message: msg }
     postWit('/wit/message', data, (res) => {
         console.log(res)
         if (res.entities.abort) {
-            abort = true;
+            entities._abort = true;
         }
-        if (res.entities.statements) {
-            let action = res.entities.statements[0].value
-            inAction = action;
-            window[action]();
-        }
-        if (res.entities.action) {
-            let text = res.entities.action[0].value;
-            responsiveVoice.speak(text, "Vietnamese Male")
-        }
-        if (res.entities.menus) {
-            let _menu = res.entities.menus[0].value;
-        }
-        if (res.entities.nhietdo) {
-            let nhietdo = res.entities.nhietdo[0].value;
+        if (res.entities.options) {
+            res.entities.options.forEach(op => {
+                metaData.forEach(m => {
+                    if (op.metadata == m.value)
+                        entities[m.value] = op.value
+                })
+            })
             if (drinkOption) {
-                addBill(drinkOption.name, drinkOption.quanlity, nhietdo);
+                metaData.forEach(m => {
+                    if (!drinkOption.option[m.value])
+                        drinkOption.option[m.value] = entities[m.value]
+                })
+                addBill(drinkOption);
+                drinkOption = null;
             }
+        }
+        if (res.entities.quanlity) {
+            entities._quanlity = res.entities.quanlity[0].value;
         }
         if (res.entities.drinks) {
-            let _drink = res.entities.drinks[0].value;
-            let _meta = res.entities.drinks[0].metadata;
-            let nhietdo = null;
-            let _quanlity = null;
-            if (res.entities.nhietdo) {
-                nhietdo = res.entities.nhietdo[0].value;
-            }
-            if (res.entities.quanlity) {
-                _quanlity = res.entities.quanlity[0].value;
-            }
-            if (!abort) {
-                if (_meta == 'nhietdo') {
-                    if (nhietdo) {
-                        addBill(_drink, _quanlity, nhietdo);
-                    } else {
-                        let data = {
-                            name: _drink,
-                            quanlity: _quanlity
-                        }
-                        drinkOption = data;
-                        responsiveVoice.speak('Bạn muốn nóng hay đá', "Vietnamese Male")
-                    }
-                } else {
-                    if (res.entities.quanlity) {
-                        _quanlity = res.entities.quanlity[0].value;
-                        addBill(_drink, _quanlity)
-                    }
-                    else {
-                        addBill(_drink)
-                    }
-                }
-            } else {
-                updateBill(_drink)
-            }
+            let _meta = null;
+            entities._drink = res.entities.drinks[0].value;
+            if (res.entities.drinks[0].metadata)
+                _meta = res.entities.drinks[0].metadata.split(',').map(String);
+            handleOrder(entities, _meta)
+        }
+        if (res.entities.menus) {
+            entities._menu = res.entities.menus[0].value;
+            if (!entities._drink)
+                handleMenu(entities._menu)
         }
     })
+}
+
+var handleOrder = (entities, _meta) => {
+    let drinkOder = {
+        name: entities._drink,
+        option: {
+            nhietdo: entities.nhietdo,
+            milk: entities.milk
+        },
+        quanlity: entities._quanlity
+    }
+    if (!entities._abort) {
+        if (_meta) {
+            let res = '';
+            _meta.forEach(m => {
+                metaData.forEach(_m => {
+                    if (m == _m.value)
+                        res += ', ' + _m.question;
+                })
+            })
+            if (res != '') {
+                drinkOption = drinkOder;
+                speak('Bạn muốn dùng' + res)
+            }
+            else
+                addBill(drinkOder)
+        }
+        else {
+            addBill(drinkOder)
+        }
+    } else {
+        updateBill(entities._drink)
+    }
+}
+
+var handleMenu = (menu) => {
+    let exist = menuDrink.find(m => {
+        return m.name.toLowerCase() == menu.toLowerCase();
+    })
+    if (exist) {
+        speak('Bạn muốn dùng loại ' + menu + ' nào?')
+    } else {
+        speak('Hiện ' + menu + ' chưa có trong thực đơn, bạn vui lòng chọn menu khác.')
+    }
 }

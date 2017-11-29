@@ -15,7 +15,7 @@ var renderMenu = (data) => {
             let menuIntent;
             let drinks = item.drinks;
             menuIntent = "<div class='col-md-4 panel panel-success'>"
-                + '<div class="panel-heading text-center">'
+                + '<div class="panel-heading text-center menu-heading">'
                 + item.name
                 + "</div>"
                 + "<div class='panel-body' menu='" + item._id + "'>"
@@ -38,4 +38,36 @@ var renderDrink = () => {
             drinkContent.append(drinkIntent);
         })
     })
+}
+
+var botChat = (msg) => {
+    let chatContent = $('.chat');
+    let item = `<li class="left clearfix">
+                    <span class="chat-img pull-left">
+                        <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                    </span>
+                    <div class="chat-body clearfix">
+                        <p class="msg-bot">
+                            ${msg}
+                        </p>
+                    </div>
+                </li>`;
+    chatContent.append(item);
+    $(".panel-chatbox").scrollTop($(".panel-chatbox").prop("scrollHeight"));
+}
+var userChat = (msg) => {
+    userAs = false;
+    let chatContent = $('.chat');
+    let item = `<li class="right clearfix">
+                    <span class="chat-img pull-right">
+                        <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                    </span>
+                    <div class="chat-body clearfix">
+                        <p class="msg-user">
+                            ${msg}
+                        </p>
+                    </div>
+                </li>`;
+    chatContent.append(item);
+    $(".panel-chatbox").scrollTop($(".panel-chatbox").prop("scrollHeight"));
 }

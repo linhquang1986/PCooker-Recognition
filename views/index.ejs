@@ -24,15 +24,15 @@
 <body>
   <div class="container menucontai text-center">
     <div class="panel panel-info orders">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="collapse" data-target="#order-body">
         <div class="panel-title">Orders</div>
       </div>
-      <div class="panel-body">
+      <div class="panel-body collapse" id="order-body">
         <ul class="list-group ordersDrinks">
         </ul>
       </div>
     </div>
-    <img id="mic-icon" src="images/icon.png">
+    <span class="glyphicon glyphicon-ice-lolly microphone" id="microphone"></span>
     <div class="row">
       <div class="listmenu col-md-12 text-center">
       </div>
@@ -42,33 +42,13 @@
       </div>
     </div>
 
-    <!-- <div class="col-md-5 chatbox">
+    <div class="col-md-5 chatbox">
       <div class="panel panel-primary">
-        <div class="panel-heading">
-          <span class="glyphicon glyphicon-comment"></span> Chat
+        <div class="panel-heading chatbox-heading" data-toggle="collapse" data-target="#demo">
+          <span class="glyphicon glyphicon-comment"></span> Chat Box
         </div>
-        <div class="panel-body">
+        <div class="panel-body panel-chatbox collapse" id="demo">
           <ul class="chat">
-            <li class="left clearfix">
-              <span class="chat-img pull-left">
-                <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
-              </span>
-              <div class="chat-body clearfix">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
-                </p>
-              </div>
-            </li>
-            <li class="right clearfix">
-              <span class="chat-img pull-right">
-                <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
-              </span>
-              <div class="chat-body clearfix">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
-                </p>
-              </div>
-            </li>
           </ul>
         </div>
         <div class="panel-footer">
@@ -81,12 +61,13 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
 
   </div>
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="js/jquery.min.js"></script>
+  <script src="js/responsivevoice.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <!-- http service -->
@@ -97,7 +78,7 @@
   <script src="js/myAction/listAction.js"></script>
   <!-- handle my action -->
   <script src="js/myAction/myAction.js"></script>
-  <script src="js/responsivevoice.js"></script>
+
   <script src="js/witAi.js"></script>
   <script src="js/recordingSpeechApi.js"></script>
 </body>

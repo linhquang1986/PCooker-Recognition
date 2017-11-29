@@ -1,6 +1,7 @@
-var listAction = {
-    _waiting: '_call',
-    ordering: '_startorder',
-    free: '_free',
-    chooseDrink: '_choosedrink'
-}
+var userAs = true;
+
+var metaData = null;
+
+get('/drink/getAllOption', data => {
+    metaData = data;
+})

@@ -1,89 +1,86 @@
+
 "use strict"
 var menuDrink = null;
 var drinksData = null;
 var billData = [];
+function speak(msg) {
+    responsiveVoice.speak(msg, "Vietnamese Male");
+    botChat(msg);
+}
 function _startorder() {
     $('.listmenu').show();
     $('.drinks').show();
-    $('#mic-icon').hide();
     get('/drink/getAllMenu', data => {
         menuDrink = data;
         renderMenu(data)
     })
+    speak('Chào bạn, mình là nhân viên order. Bạn muốn dùng gì?')
 }
 _startorder();
-
-function _call() {
-    responsiveVoice.speak("Bạn muốn tôi giúp gì", "Vietnamese Male")
-}
 
 function _free() {
     stopRecording();
     start();
-    $('#mic-icon').show();
-    $('.listmenu').hide();
-    $('.drinks').hide();
 }
 
 function updateBill(_drink) {
-    //responsiveVoice.speak('Bạn muốn bỏ ' + _drink + ' đúng không?', "Vietnamese Male", { rate: 1.2 });
     let dr = drinksData.find(drink => { return drink.name.toLowerCase() == _drink.toLowerCase() })
     if (dr) {
         let drinkInBill = $('.ordersDrinks').find(`[drinkId=${dr._id}]`);
         drinkInBill.remove();
-        billData.filter(drink => drink.toLowerCase() !== _drink.toLowerCase())
+        billData.filter(drink => drink.name.toLowerCase() !== _drink.name.toLowerCase())
     }
 }
-// function checkAbortDrink(msg) {
-//     let abort = 0;
-//     msg.search('vo') >= 0 && abort++;
-//     msg.search('bo') >= 0 && abort++;
-//     msg.search('huy') >= 0 && abort++;
-//     msg.search('vo') >= 0 && abort++;
-//     msg.search('xoa') >= 0 && abort++;
-//     return abort;
-// }
-// function locdau(_str) {
-//     var str;
-//     str = _str;
-//     str = str.toLowerCase();
-//     str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
-//     str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
-//     str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
-//     str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
-//     str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
-//     str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
-//     str = str.replace(/đ/g, "d");
-//     str = str.replace(/^\-+|\-+$/g, "");
-//     return str;
-// }
-function addBill(_drink, _quanlity, option) {
-    drinkOption = null;
-    let quanlity = _quanlity || 1;
-    let _option = '';
-    if (option)
-        _option = '(' + option + ')';
+function addBill(drinkObj) {
+    drinkObj.quanlity = drinkObj.quanlity || 1;
+    speak(drinkObj.quanlity + ' ' + drinkObj.name);
+    let _option = strOption(drinkObj.option);
+    if (_option == '()') {
+        _option = '';
+    }
     drinksData.forEach(drink => {
-        if (_drink.toLowerCase() == drink.name.toLowerCase()) {
+        if (drinkObj.name.toLowerCase() == drink.name.toLowerCase()) {
+            drinkObj.price = drink.price;
+            drinkObj.id = drink._id;
+            drinkObj.strOption = _option;
             horverDrink(drink._id)
-            billData.push(_drink)
-            let drinkInBill = $('.ordersDrinks').find(`[drinkId=${drink._id}]`);
-            if (drinkInBill.length == 0) {
-                let bill = $('.orders').find('.ordersDrinks');
-                let price = quanlity * drink.price;
-                let drinkIntent = '<li class="list-group-item drink-item" drinkId="' + drink._id + '"><p class="quanlity">' + quanlity + '</p>' + drink.name + _option + '<span class="badge">' + price + ' Đ</span></li>';
-                bill.append(drinkIntent)
+            let findD = billData.find(dr => {
+                return dr.name.toLowerCase() == drinkObj.name.toLowerCase() && dr.strOption == drinkObj.strOption;
+            })
+            if (findD) {
+                billData.forEach((dr) => {
+                    if (dr.name.toLowerCase() == drinkObj.name.toLowerCase() && dr.strOption == drinkObj.strOption) {
+                        dr.quanlity = parseInt(dr.quanlity) + parseInt(drinkObj.quanlity);
+                    }
+                })
             } else {
-                let quanlityE = drinkInBill.find('.quanlity');
-                let badge = drinkInBill.find('.badge')
-                let quanlity_ = parseInt(quanlityE.html()) + parseInt(quanlity);
-                let price = quanlity_ * drink.price;
-
-                quanlityE.html(quanlity_)
-                badge.html(price + ' Đ')
+                billData.push(drinkObj);
             }
+            renderBill(billData)
         }
     })
+}
+
+function renderBill(data) {
+    let bill = $('.orders').find('.ordersDrinks');
+    bill.empty();
+    data.forEach(d => {
+        let price = d.quanlity * d.price;
+        let drinkIntent = '<li class="list-group-item drink-item" drinkId="' + d.id + '"><p class="quanlity">' + d.quanlity + '</p>' + d.name + d.strOption + '<span class="badge">' + price + ' Đ</span></li>';
+        bill.append(drinkIntent)
+    })
+}
+
+function strOption(option) {
+    let srt = '';
+    Object.keys(option).forEach((key, index) => {
+        if (index > 0 && option[key] != null)
+            srt += ','
+        if (option[key] != null) {
+            srt += option[key];
+        }
+    })
+    return '(' + srt + ')';
 }
 
 function horverDrink(id) {
@@ -106,3 +103,22 @@ function getAllDrink(callback) {
         callback(data);
     })
 }
+
+$('#btn-chat').on('click', (e) => {
+    let msg = $('#btn-input').val();
+    if (msg != '') {
+        userChat(msg);
+        sendWitAi(msg);
+        $('#btn-input').val('');
+    }
+})
+$('#btn-input').on("keypress", function (e) {
+    if (e.which === 13) {
+        let msg = $('#btn-input').val();
+        if (msg != '') {
+            userChat(msg);
+            sendWitAi(msg);
+            $('#btn-input').val('');
+        }
+    }
+});
