@@ -60,12 +60,16 @@ var handleOrder = (entities, _meta) => {
         },
         quanlity: entities._quanlity
     }
+    let options = [];
+    let findD = drinksData.find(d => { return d.name.toLowerCase() === drinkOder.name.toLowerCase() });
+    if (findD)
+        options = findD.options;
     if (!entities._abort) {
-        if (_meta) {
+        if (options.length > 0) {
             let res = '';
-            _meta.forEach(m => {
+            options.forEach(m => {
                 metaData.forEach(_m => {
-                    if (m == _m.value)
+                    if (m == _m._id)
                         res += ', ' + _m.question;
                 })
             })

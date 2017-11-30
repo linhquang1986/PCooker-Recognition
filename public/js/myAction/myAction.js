@@ -39,7 +39,7 @@ function addBill(drinkObj) {
         _option = '';
     }
     drinksData.forEach(drink => {
-        if (drinkObj.name.toLowerCase() == drink.name.toLowerCase()) {
+        if (drinkObj.name.replace(/\s/g, '').toLowerCase() == drink.name.replace(/\s/g, '').toLowerCase()) {
             drinkObj.price = drink.price;
             drinkObj.id = drink._id;
             drinkObj.strOption = _option;

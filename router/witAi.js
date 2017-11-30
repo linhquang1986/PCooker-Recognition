@@ -10,4 +10,6 @@ router.use(header);
 
 router.post('/message', witController.message)
 
+router.post('/addValue',witController.addValue)
+
 module.exports = router;
