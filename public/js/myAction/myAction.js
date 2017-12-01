@@ -34,7 +34,7 @@ function updateBill(_drink) {
 function addBill(drinkObj) {
     drinkObj.quanlity = drinkObj.quanlity || 1;
     speak(drinkObj.quanlity + ' ' + drinkObj.name);
-    let _option = strOption(drinkObj.option);
+    let _option = strOption(drinkObj.options);
     if (_option == '()') {
         _option = '';
     }

@@ -1,15 +1,14 @@
 "use strict"
 var recognition = null;
 var inAction = null;
-var drinkOption = null;
+var saveDrink = null;
+var saveEntities = null;
 function sendWitAi(msg) {
     let entities = {
         _abort: null,
         _quanlity: null,
         _drink: null,
-        _menu: null,
-        nhietdo: null,
-        milk: null
+        _menu: null
     }
     let data = { message: msg }
     postWit('/wit/message', data, (res) => {
@@ -24,57 +23,77 @@ function sendWitAi(msg) {
                         entities[m.value] = op.value
                 })
             })
-            if (drinkOption) {
+            if (saveDrink) {
                 metaData.forEach(m => {
-                    if (!drinkOption.option[m.value])
-                        drinkOption.option[m.value] = entities[m.value]
+                    if (!saveDrink.options[m.value])
+                        saveDrink.options[m.value] = entities[m.value]
                 })
-                addBill(drinkOption);
-                drinkOption = null;
+                addBill(saveDrink);
+                saveDrink = null;
             }
         }
         if (res.entities.quanlity) {
             entities._quanlity = res.entities.quanlity[0].value;
+            if (saveEntities) {
+                saveEntities._quanlity = entities._quanlity;
+                handleOrder(saveEntities);
+                saveEntities = null;
+            }
         }
         if (res.entities.drinks) {
-            let _meta = null;
             entities._drink = res.entities.drinks[0].value;
-            if (res.entities.drinks[0].metadata)
-                _meta = res.entities.drinks[0].metadata.split(',').map(String);
-            handleOrder(entities, _meta)
         }
         if (res.entities.menus) {
             entities._menu = res.entities.menus[0].value;
-            if (!entities._drink)
+        }
+        if (res.entities.have && res.entities.y_n) {
+            if (entities._drink)
+                quesDrink(entities)
+            if (entities._menu)
                 handleMenu(entities._menu)
+            if (!entities._drink && !entities._menu)
+                speak('Hiện bên mình chưa có bạn vui lòng chọn nước khác nha.');
+        }
+        if (!res.entities.have || !res.entities.y_n && !res.entities.listed) {
+            if (entities._drink)
+                handleOrder(entities)
+            if (entities._menu)
+                handleMenu(entities._menu)
+        }
+        if (res.entities.have && res.entities.listed) {
+
         }
     })
 }
-
-var handleOrder = (entities, _meta) => {
+var quesDrink = (entities) => {
+    speak('Có bạn');
+    saveEntities = entities;
+}
+var handleOrder = (entities) => {
     let drinkOder = {
         name: entities._drink,
-        option: {
-            nhietdo: entities.nhietdo,
-            milk: entities.milk
-        },
-        quanlity: entities._quanlity
+        quanlity: entities._quanlity,
+        options: {}
     }
     let options = [];
     let findD = drinksData.find(d => { return d.name.toLowerCase() === drinkOder.name.toLowerCase() });
     if (findD)
-        options = findD.options;
+        options = findD.options.slice();
     if (!entities._abort) {
         if (options.length > 0) {
             let res = '';
             options.forEach(m => {
                 metaData.forEach(_m => {
-                    if (m == _m._id)
-                        res += ', ' + _m.question;
+                    if (m == _m._id) {
+                        if (!entities[_m.value])
+                            res += ', ' + _m.question;
+                        else
+                            drinkOder.options[_m.value] = entities[_m.value]
+                    }
                 })
             })
             if (res != '') {
-                drinkOption = drinkOder;
+                saveDrink = drinkOder;
                 speak('Bạn muốn dùng' + res)
             }
             else
@@ -95,6 +114,6 @@ var handleMenu = (menu) => {
     if (exist) {
         speak('Bạn muốn dùng loại ' + menu + ' nào?')
     } else {
-        speak('Hiện ' + menu + ' chưa có trong thực đơn, bạn vui lòng chọn menu khác.')
+        speak('Hiện bên mình chưa có bạn vui lòng chọn nước khác nha.')
     }
 }
